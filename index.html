@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Actividades para el Aburrimiento</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: #667eea;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 400px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+        }
+        
+        
+        .type-badge {
+            background: #edf2f7;
+            color: #4a5568;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            text-transform: capitalize;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="text-center text-primary mb-4">🎯 Actividades Divertidas</h1>
+        
+        <div class="d-grid gap-2 mb-4">
+            <button class="btn btn-danger btn-lg" onclick="getRandomActivity()">
+                😴 ¿Estás Aburrido?
+            </button>
+            
+            <button class="btn btn-success btn-lg" onclick="toggleFilters()">
+                📋 Filtrar Actividades
+            </button>
+        </div>
+
+        <div class="mb-3">
+            <div class="filter-controls d-none" id="filterControls">
+                <div class="mb-2">
+                    <select class="form-select" id="typeFilter">
+                        <option value="">Selecciona una categoría</option>
+                        <option value="education">Educación</option>
+                        <option value="recreational">Recreativo</option>
+                        <option value="social">Social</option>
+                        <option value="charity">Caridad</option>
+                        <option value="cooking">Cocina</option>
+                        <option value="relaxation">Relajación</option>
+                        <option value="busywork">Trabajo</option>
+                    </select>
+                </div>
+                
+                <div class="mb-2">
+                    <select class="form-select" id="participantsFilter">
+                        <option value="">Número de participantes</option>
+                        <option value="1">1 persona</option>
+                        <option value="2">2 personas</option>
+                        <option value="3">3 personas</option>
+                        <option value="4">4 personas</option>
+                        <option value="5">5 personas</option>
+                        <option value="6">6 personas</option>
+                        <option value="8">8 personas</option>
+                    </select>
+                </div>
+                
+                <button class="btn btn-primary w-100" onclick="getFilteredActivities()">
+                    🔍 Buscar Actividades
+                </button>
+            </div>
+        </div>
+
+        <div id="results"></div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        let filtersVisible = false;
+
+        function toggleFilters() {
+            const filterControls = document.getElementById('filterControls');
+            filtersVisible = !filtersVisible;
+            
+            if (filtersVisible) {
+                filterControls.classList.remove('d-none');
+                filterControls.classList.add('d-block');
+            } else {
+                filterControls.classList.remove('d-block');
+                filterControls.classList.add('d-none');
+            }
+        }
+
+        async function getRandomActivity() {
+            const resultsDiv = document.getElementById('results');
+            const btn = event.target;
+            
+            btn.disabled = true;
+            resultsDiv.innerHTML = '<div class="text-center text-muted my-3">🎲 Buscando una actividad divertida...</div>';
+            
+            try {
+                const response = await fetch('https://bored-api.appbrewery.com/random');
+                
+                if (!response.ok) {
+                    throw new Error('API no disponible');
+                }
+                
+                const activity = await response.json();
+                displayActivity(activity);
+                
+            } catch (error) {
+                resultsDiv.innerHTML = `
+                    <div class="alert alert-danger">
+                        ❌ Error: ${error.message}
+                    </div>
+                `;
+            } finally {
+                btn.disabled = false;
+            }
+        }
+
+        async function getFilteredActivities() {
+            const resultsDiv = document.getElementById('results');
+            const typeFilter = document.getElementById('typeFilter').value;
+            const participantsFilter = document.getElementById('participantsFilter').value;
+            const btn = event.target;
+            
+            if (!typeFilter && !participantsFilter) {
+                resultsDiv.innerHTML = `
+                    <div class="alert alert-warning">
+                        ⚠️ Por favor selecciona al menos un filtro
+                    </div>
+                `;
+                return;
+            }
+            
+            let url = 'https://bored-api.appbrewery.com/filter?';
+            const params = [];
+            
+            if (typeFilter) params.push(`type=${typeFilter}`);
+            if (participantsFilter) params.push(`participants=${participantsFilter}`);
+            
+            url += params.join('&');
+            
+            btn.disabled = true;
+            resultsDiv.innerHTML = '<div class="text-center text-muted my-3">🔍 Buscando actividades...</div>';
+            
+            try {
+                const response = await fetch(url);
+                
+                if (!response.ok) {
+                    throw new Error('API no disponible');
+                }
+                
+                const activities = await response.json();
+                
+                if (activities.length === 0) {
+                    resultsDiv.innerHTML = `
+                        <div class="alert alert-warning">
+                            😞 No se encontraron actividades con esos filtros
+                        </div>
+                    `;
+                } else {
+                    displayActivities(activities);
+                }
+                
+            } catch (error) {
+                resultsDiv.innerHTML = `
+                    <div class="alert alert-danger">
+                        ❌ Error: ${error.message}
+                    </div>
+                `;
+            } finally {
+                btn.disabled = false;
+            }
+        }
+
+        function displayActivity(activity) {
+            const resultsDiv = document.getElementById('results');
+            
+            resultsDiv.innerHTML = `
+                <div class="card activity-card mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title">🎯 ${activity.activity}</h5>
+                        <div class="row">
+                            <div class="col-6"><strong>Tipo:</strong> <span class="type-badge">${activity.type}</span></div>
+                            <div class="col-6"><strong>Participantes:</strong> ${activity.participants}</div>
+                            <div class="col-6"><strong>Precio:</strong> ${getPriceText(activity.price)}</div>
+                            <div class="col-6"><strong>Accesibilidad:</strong> ${activity.accessibility}</div>
+                        </div>
+                        ${activity.link ? `<a href="${activity.link}" target="_blank" class="btn btn-sm btn-primary mt-2">🔗 Más información</a>` : ''}
+                    </div>
+                </div>
+            `;
+        }
+
+        function displayActivities(activities) {
+            const resultsDiv = document.getElementById('results');
+            let html = `<h5 class="mb-3">📊 ${activities.length} actividades encontradas:</h5>`;
+            
+            activities.forEach(activity => {
+                html += `
+                    <div class="card activity-card mb-3">
+                        <div class="card-body">
+                            <h5 class="card-title">🎯 ${activity.activity}</h5>
+                            <div class="row">
+                                <div class="col-6"><strong>Tipo:</strong> <span class="type-badge">${activity.type}</span></div>
+                                <div class="col-6"><strong>Participantes:</strong> ${activity.participants}</div>
+                                <div class="col-6"><strong>Precio:</strong> ${getPriceText(activity.price)}</div>
+                                <div class="col-6"><strong>Accesibilidad:</strong> ${activity.accessibility}</div>
+                            </div>
+                            ${activity.link ? `<a href="${activity.link}" target="_blank" class="btn btn-sm btn-primary mt-2">🔗 Más información</a>` : ''}
+                        </div>
+                    </div>
+                `;
+            });
+            
+            resultsDiv.innerHTML = html;
+        }
+
+        function getPriceText(price) {
+            if (price === 0) return '💰 Gratis';
+            if (price <= 0.3) return '💰 Barato';
+            if (price <= 0.6) return '💰 Moderado';
+            return '💰 Caro';
+        }
+    </script>
+</body>
+</html>
