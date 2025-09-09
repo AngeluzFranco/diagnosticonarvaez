@@ -4,25 +4,179 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Actividades para el Aburrimiento</title>
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
-            background: #667eea;
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             padding: 20px;
+            color: #333;
         }
-        
+
         .container {
             max-width: 400px;
+            margin: 0 auto;
             background: rgba(255, 255, 255, 0.95);
             border-radius: 20px;
-            padding: 20px;
+            padding: 30px 20px;
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
             backdrop-filter: blur(10px);
         }
-        
-        
+
+        h1 {
+            text-align: center;
+            color: #5a67d8;
+            margin-bottom: 30px;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .button-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .btn {
+            padding: 15px 20px;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #ff6b6b, #ee5a52);
+            color: white;
+            box-shadow: 0 8px 20px rgba(255, 107, 107, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 25px rgba(255, 107, 107, 0.4);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(45deg, #4ecdc4, #44a08d);
+            color: white;
+            box-shadow: 0 8px 20px rgba(78, 205, 196, 0.3);
+        }
+
+        .btn-secondary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 25px rgba(78, 205, 196, 0.4);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        .filter-section {
+            margin-bottom: 20px;
+        }
+
+        .filter-controls {
+            display: none;
+            flex-direction: column;
+            gap: 15px;
+            margin-top: 20px;
+            padding: 20px;
+            background: rgba(240, 240, 240, 0.8);
+            border-radius: 12px;
+        }
+
+        .filter-controls.active {
+            display: flex;
+        }
+
+        select {
+            padding: 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 14px;
+            background: white;
+            color: #333;
+        }
+
+        select:focus {
+            outline: none;
+            border-color: #5a67d8;
+        }
+
+        .results {
+            margin-top: 20px;
+        }
+
+        .activity-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            border-left: 4px solid #5a67d8;
+        }
+
+        .activity-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #2d3748;
+            margin-bottom: 10px;
+        }
+
+        .activity-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 10px;
+        }
+
+        .activity-link {
+            display: inline-block;
+            background: #5a67d8;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 12px;
+            margin-top: 10px;
+            transition: background 0.3s ease;
+        }
+
+        .activity-link:hover {
+            background: #4c51bf;
+        }
+
+        .loading {
+            text-align: center;
+            color: #666;
+            font-style: italic;
+            padding: 20px;
+        }
+
+        .error {
+            background: #fed7d7;
+            color: #c53030;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 10px;
+            text-align: center;
+        }
+
         .type-badge {
             background: #edf2f7;
             color: #4a5568;
@@ -31,61 +185,71 @@
             font-size: 12px;
             text-transform: capitalize;
         }
+
+        @media (max-width: 480px) {
+            .container {
+                margin: 10px;
+                padding: 20px 15px;
+            }
+            
+            h1 {
+                font-size: 20px;
+            }
+            
+            .btn {
+                padding: 12px 16px;
+                font-size: 14px;
+            }
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1 class="text-center text-primary mb-4">🎯 Actividades Divertidas</h1>
+        <h1>🎯 Actividades Divertidas</h1>
         
-        <div class="d-grid gap-2 mb-4">
-            <button class="btn btn-danger btn-lg" onclick="getRandomActivity()">
+        <div class="button-container">
+            <button class="btn btn-primary" onclick="getRandomActivity()">
                 😴 ¿Estás Aburrido?
             </button>
             
-            <button class="btn btn-success btn-lg" onclick="toggleFilters()">
+            <button class="btn btn-secondary" onclick="toggleFilters()">
                 📋 Filtrar Actividades
             </button>
         </div>
 
-        <div class="mb-3">
-            <div class="filter-controls d-none" id="filterControls">
-                <div class="mb-2">
-                    <select class="form-select" id="typeFilter">
-                        <option value="">Selecciona una categoría</option>
-                        <option value="education">Educación</option>
-                        <option value="recreational">Recreativo</option>
-                        <option value="social">Social</option>
-                        <option value="charity">Caridad</option>
-                        <option value="cooking">Cocina</option>
-                        <option value="relaxation">Relajación</option>
-                        <option value="busywork">Trabajo</option>
-                    </select>
-                </div>
+        <div class="filter-section">
+            <div class="filter-controls" id="filterControls">
+                <select id="typeFilter">
+                    <option value="">Selecciona una categoría</option>
+                    <option value="education">Educación</option>
+                    <option value="recreational">Recreativo</option>
+                    <option value="social">Social</option>
+                    <option value="charity">Caridad</option>
+                    <option value="cooking">Cocina</option>
+                    <option value="relaxation">Relajación</option>
+                    <option value="busywork">Trabajo</option>
+                </select>
                 
-                <div class="mb-2">
-                    <select class="form-select" id="participantsFilter">
-                        <option value="">Número de participantes</option>
-                        <option value="1">1 persona</option>
-                        <option value="2">2 personas</option>
-                        <option value="3">3 personas</option>
-                        <option value="4">4 personas</option>
-                        <option value="5">5 personas</option>
-                        <option value="6">6 personas</option>
-                        <option value="8">8 personas</option>
-                    </select>
-                </div>
+                <select id="participantsFilter">
+                    <option value="">Número de participantes</option>
+                    <option value="1">1 persona</option>
+                    <option value="2">2 personas</option>
+                    <option value="3">3 personas</option>
+                    <option value="4">4 personas</option>
+                    <option value="5">5 personas</option>
+                    <option value="6">6 personas</option>
+                    <option value="8">8 personas</option>
+                </select>
                 
-                <button class="btn btn-primary w-100" onclick="getFilteredActivities()">
+                <button class="btn btn-primary" onclick="getFilteredActivities()">
                     🔍 Buscar Actividades
                 </button>
             </div>
         </div>
 
-        <div id="results"></div>
+        <div class="results" id="results"></div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-    
     <script>
         let filtersVisible = false;
 
@@ -94,11 +258,9 @@
             filtersVisible = !filtersVisible;
             
             if (filtersVisible) {
-                filterControls.classList.remove('d-none');
-                filterControls.classList.add('d-block');
+                filterControls.classList.add('active');
             } else {
-                filterControls.classList.remove('d-block');
-                filterControls.classList.add('d-none');
+                filterControls.classList.remove('active');
             }
         }
 
@@ -106,22 +268,52 @@
             const resultsDiv = document.getElementById('results');
             const btn = event.target;
             
+            // Deshabilitar botón y mostrar loading
             btn.disabled = true;
-            resultsDiv.innerHTML = '<div class="text-center text-muted my-3">🎲 Buscando una actividad divertida...</div>';
+            resultsDiv.innerHTML = '<div class="loading">🎲 Buscando una actividad divertida...</div>';
             
             try {
-                const response = await fetch('https://bored-api.appbrewery.com/random');
+                // Usar proxy CORS para evitar problemas de CORS
+                const proxyUrl = 'https://cors-anywhere.herokuapp.com/';
+                const targetUrl = 'https://bored-api.appbrewery.com/random';
                 
-                if (!response.ok) {
-                    throw new Error('API no disponible');
+                let response;
+                let activity;
+                
+                // Intentar primero sin proxy
+                try {
+                    response = await fetch(targetUrl);
+                    if (response.ok) {
+                        activity = await response.json();
+                    } else {
+                        throw new Error('API no disponible');
+                    }
+                } catch (corsError) {
+                    // Si falla por CORS, intentar con proxy
+                    try {
+                        response = await fetch(proxyUrl + targetUrl);
+                        if (response.ok) {
+                            activity = await response.json();
+                        } else {
+                            // Si el proxy también falla, usar datos de ejemplo
+                            throw new Error('Proxy no disponible');
+                        }
+                    } catch (proxyError) {
+                        // Usar actividad de ejemplo si todo falla
+                        activity = getRandomSampleActivity();
+                        resultsDiv.innerHTML = `
+                            <div style="background: #fff3cd; color: #856404; padding: 15px; border-radius: 8px; margin-bottom: 15px; text-align: center;">
+                                ⚠️ Usando datos de ejemplo (problema de conexión con la API)
+                            </div>
+                        `;
+                    }
                 }
                 
-                const activity = await response.json();
                 displayActivity(activity);
                 
             } catch (error) {
                 resultsDiv.innerHTML = `
-                    <div class="alert alert-danger">
+                    <div class="error">
                         ❌ Error: ${error.message}
                     </div>
                 `;
@@ -138,13 +330,14 @@
             
             if (!typeFilter && !participantsFilter) {
                 resultsDiv.innerHTML = `
-                    <div class="alert alert-warning">
+                    <div class="error">
                         ⚠️ Por favor selecciona al menos un filtro
                     </div>
                 `;
                 return;
             }
             
+            // Construir URL con parámetros
             let url = 'https://bored-api.appbrewery.com/filter?';
             const params = [];
             
@@ -153,21 +346,46 @@
             
             url += params.join('&');
             
+            // Deshabilitar botón y mostrar loading
             btn.disabled = true;
-            resultsDiv.innerHTML = '<div class="text-center text-muted my-3">🔍 Buscando actividades...</div>';
+            resultsDiv.innerHTML = '<div class="loading">🔍 Buscando actividades...</div>';
             
             try {
-                const response = await fetch(url);
+                const proxyUrl = 'https://cors-anywhere.herokuapp.com/';
+                let response;
+                let activities;
                 
-                if (!response.ok) {
-                    throw new Error('API no disponible');
+                // Intentar primero sin proxy
+                try {
+                    response = await fetch(url);
+                    if (response.ok) {
+                        activities = await response.json();
+                    } else {
+                        throw new Error('API no disponible');
+                    }
+                } catch (corsError) {
+                    // Si falla por CORS, intentar con proxy
+                    try {
+                        response = await fetch(proxyUrl + url);
+                        if (response.ok) {
+                            activities = await response.json();
+                        } else {
+                            throw new Error('Proxy no disponible');
+                        }
+                    } catch (proxyError) {
+                        // Usar actividades de ejemplo si todo falla
+                        activities = getSampleActivitiesByFilter(typeFilter, participantsFilter);
+                        resultsDiv.innerHTML = `
+                            <div style="background: #fff3cd; color: #856404; padding: 15px; border-radius: 8px; margin-bottom: 15px; text-align: center;">
+                                ⚠️ Usando datos de ejemplo (problema de conexión con la API)
+                            </div>
+                        `;
+                    }
                 }
-                
-                const activities = await response.json();
                 
                 if (activities.length === 0) {
                     resultsDiv.innerHTML = `
-                        <div class="alert alert-warning">
+                        <div class="error">
                             😞 No se encontraron actividades con esos filtros
                         </div>
                     `;
@@ -177,7 +395,7 @@
                 
             } catch (error) {
                 resultsDiv.innerHTML = `
-                    <div class="alert alert-danger">
+                    <div class="error">
                         ❌ Error: ${error.message}
                     </div>
                 `;
@@ -188,40 +406,47 @@
 
         function displayActivity(activity) {
             const resultsDiv = document.getElementById('results');
+            const translateType = getTypeTranslation(activity.type);
+            const translateAccessibility = getAccessibilityTranslation(activity.accessibility);
+            const translateDuration = getDurationTranslation(activity.duration);
             
             resultsDiv.innerHTML = `
-                <div class="card activity-card mb-3">
-                    <div class="card-body">
-                        <h5 class="card-title">🎯 ${activity.activity}</h5>
-                        <div class="row">
-                            <div class="col-6"><strong>Tipo:</strong> <span class="type-badge">${activity.type}</span></div>
-                            <div class="col-6"><strong>Participantes:</strong> ${activity.participants}</div>
-                            <div class="col-6"><strong>Precio:</strong> ${getPriceText(activity.price)}</div>
-                            <div class="col-6"><strong>Accesibilidad:</strong> ${activity.accessibility}</div>
-                        </div>
-                        ${activity.link ? `<a href="${activity.link}" target="_blank" class="btn btn-sm btn-primary mt-2">🔗 Más información</a>` : ''}
+                <div class="activity-card">
+                    <div class="activity-title">🎯 ${activity.activity}</div>
+                    <div class="activity-info">
+                        <div><strong>Tipo:</strong> <span class="type-badge">${translateType}</span></div>
+                        <div><strong>Participantes:</strong> ${activity.participants}</div>
+                        <div><strong>Precio:</strong> ${getPriceText(activity.price)}</div>
+                        <div><strong>Duración:</strong> ${translateDuration}</div>
+                        <div><strong>Accesibilidad:</strong> ${translateAccessibility}</div>
+                        <div><strong>Para niños:</strong> ${activity.kidFriendly ? '✅ Sí' : '❌ No'}</div>
                     </div>
+                    ${activity.link ? `<a href="${activity.link}" target="_blank" class="activity-link">🔗 Más información</a>` : ''}
                 </div>
             `;
         }
 
         function displayActivities(activities) {
             const resultsDiv = document.getElementById('results');
-            let html = `<h5 class="mb-3">📊 ${activities.length} actividades encontradas:</h5>`;
+            let html = `<h3 style="margin-bottom: 15px; color: #2d3748;">📊 ${activities.length} actividades encontradas:</h3>`;
             
             activities.forEach(activity => {
+                const translateType = getTypeTranslation(activity.type);
+                const translateAccessibility = getAccessibilityTranslation(activity.accessibility);
+                const translateDuration = getDurationTranslation(activity.duration);
+                
                 html += `
-                    <div class="card activity-card mb-3">
-                        <div class="card-body">
-                            <h5 class="card-title">🎯 ${activity.activity}</h5>
-                            <div class="row">
-                                <div class="col-6"><strong>Tipo:</strong> <span class="type-badge">${activity.type}</span></div>
-                                <div class="col-6"><strong>Participantes:</strong> ${activity.participants}</div>
-                                <div class="col-6"><strong>Precio:</strong> ${getPriceText(activity.price)}</div>
-                                <div class="col-6"><strong>Accesibilidad:</strong> ${activity.accessibility}</div>
-                            </div>
-                            ${activity.link ? `<a href="${activity.link}" target="_blank" class="btn btn-sm btn-primary mt-2">🔗 Más información</a>` : ''}
+                    <div class="activity-card">
+                        <div class="activity-title">🎯 ${activity.activity}</div>
+                        <div class="activity-info">
+                            <div><strong>Tipo:</strong> <span class="type-badge">${translateType}</span></div>
+                            <div><strong>Participantes:</strong> ${activity.participants}</div>
+                            <div><strong>Precio:</strong> ${getPriceText(activity.price)}</div>
+                            <div><strong>Duración:</strong> ${translateDuration}</div>
+                            <div><strong>Accesibilidad:</strong> ${translateAccessibility}</div>
+                            <div><strong>Para niños:</strong> ${activity.kidFriendly ? '✅ Sí' : '❌ No'}</div>
                         </div>
+                        ${activity.link ? `<a href="${activity.link}" target="_blank" class="activity-link">🔗 Más información</a>` : ''}
                     </div>
                 `;
             });
@@ -229,11 +454,267 @@
             resultsDiv.innerHTML = html;
         }
 
+        function getTypeTranslation(type) {
+            const translations = {
+                'education': 'Educación',
+                'recreational': 'Recreativo',
+                'social': 'Social',
+                'charity': 'Caridad',
+                'cooking': 'Cocina',
+                'relaxation': 'Relajación',
+                'busywork': 'Trabajo'
+            };
+            return translations[type] || type;
+        }
+
+        function getAccessibilityTranslation(accessibility) {
+            const translations = {
+                'Few to no challenges': 'Pocos desafíos',
+                'Minor challenges': 'Desafíos menores',
+                'Some challenges': 'Algunos desafíos',
+                'Major challenges': 'Desafíos importantes'
+            };
+            return translations[accessibility] || accessibility;
+        }
+
+        function getDurationTranslation(duration) {
+            const translations = {
+                'minutes': 'Minutos',
+                'hours': 'Horas',
+                'days': 'Días',
+                'weeks': 'Semanas'
+            };
+            return translations[duration] || duration;
+        }
+
         function getPriceText(price) {
             if (price === 0) return '💰 Gratis';
             if (price <= 0.3) return '💰 Barato';
             if (price <= 0.6) return '💰 Moderado';
             return '💰 Caro';
+        }
+
+        // Funciones para datos de ejemplo cuando la API no está disponible
+        function getRandomSampleActivity() {
+            const sampleActivities = [
+                {
+                    "activity": "Leer un libro de tu género favorito",
+                    "availability": 0.9,
+                    "type": "education",
+                    "participants": 1,
+                    "price": 0.1,
+                    "accessibility": "Few to no challenges",
+                    "duration": "hours",
+                    "kidFriendly": true,
+                    "link": "",
+                    "key": "sample1"
+                },
+                {
+                    "activity": "Hacer ejercicio en casa",
+                    "availability": 0.8,
+                    "type": "recreational",
+                    "participants": 1,
+                    "price": 0,
+                    "accessibility": "Minor challenges",
+                    "duration": "minutes",
+                    "kidFriendly": true,
+                    "link": "",
+                    "key": "sample2"
+                },
+                {
+                    "activity": "Llamar a un amigo para ponerse al día",
+                    "availability": 0.7,
+                    "type": "social",
+                    "participants": 2,
+                    "price": 0,
+                    "accessibility": "Few to no challenges",
+                    "duration": "minutes",
+                    "kidFriendly": true,
+                    "link": "",
+                    "key": "sample3"
+                },
+                {
+                    "activity": "Preparar una receta nueva",
+                    "availability": 0.6,
+                    "type": "cooking",
+                    "participants": 1,
+                    "price": 0.3,
+                    "accessibility": "Some challenges",
+                    "duration": "hours",
+                    "kidFriendly": false,
+                    "link": "",
+                    "key": "sample4"
+                },
+                {
+                    "activity": "Meditar durante 10 minutos",
+                    "availability": 0.9,
+                    "type": "relaxation",
+                    "participants": 1,
+                    "price": 0,
+                    "accessibility": "Few to no challenges",
+                    "duration": "minutes",
+                    "kidFriendly": true,
+                    "link": "",
+                    "key": "sample5"
+                }
+            ];
+            
+            return sampleActivities[Math.floor(Math.random() * sampleActivities.length)];
+        }
+
+        function getSampleActivitiesByFilter(type, participants) {
+            const allSampleActivities = [
+                {
+                    "activity": "Leer un libro de tu género favorito",
+                    "availability": 0.9,
+                    "type": "education",
+                    "participants": 1,
+                    "price": 0.1,
+                    "accessibility": "Few to no challenges",
+                    "duration": "hours",
+                    "kidFriendly": true,
+                    "link": "",
+                    "key": "sample1"
+                },
+                {
+                    "activity": "Aprender palabras en un idioma nuevo",
+                    "availability": 0.8,
+                    "type": "education",
+                    "participants": 1,
+                    "price": 0,
+                    "accessibility": "Minor challenges",
+                    "duration": "minutes",
+                    "kidFriendly": true,
+                    "link": "",
+                    "key": "sample6"
+                },
+                {
+                    "activity": "Hacer ejercicio en casa",
+                    "availability": 0.8,
+                    "type": "recreational",
+                    "participants": 1,
+                    "price": 0,
+                    "accessibility": "Minor challenges",
+                    "duration": "minutes",
+                    "kidFriendly": true,
+                    "link": "",
+                    "key": "sample2"
+                },
+                {
+                    "activity": "Jugar un videojuego",
+                    "availability": 0.7,
+                    "type": "recreational",
+                    "participants": 1,
+                    "price": 0.2,
+                    "accessibility": "Few to no challenges",
+                    "duration": "hours",
+                    "kidFriendly": true,
+                    "link": "",
+                    "key": "sample7"
+                },
+                {
+                    "activity": "Llamar a un amigo para ponerse al día",
+                    "availability": 0.7,
+                    "type": "social",
+                    "participants": 2,
+                    "price": 0,
+                    "accessibility": "Few to no challenges",
+                    "duration": "minutes",
+                    "kidFriendly": true,
+                    "link": "",
+                    "key": "sample3"
+                },
+                {
+                    "activity": "Organizar una reunión virtual con amigos",
+                    "availability": 0.5,
+                    "type": "social",
+                    "participants": 4,
+                    "price": 0,
+                    "accessibility": "Minor challenges",
+                    "duration": "hours",
+                    "kidFriendly": true,
+                    "link": "",
+                    "key": "sample8"
+                },
+                {
+                    "activity": "Preparar una receta nueva",
+                    "availability": 0.6,
+                    "type": "cooking",
+                    "participants": 1,
+                    "price": 0.3,
+                    "accessibility": "Some challenges",
+                    "duration": "hours",
+                    "kidFriendly": false,
+                    "link": "",
+                    "key": "sample4"
+                },
+                {
+                    "activity": "Hornear galletas caseras",
+                    "availability": 0.5,
+                    "type": "cooking",
+                    "participants": 2,
+                    "price": 0.2,
+                    "accessibility": "Minor challenges",
+                    "duration": "hours",
+                    "kidFriendly": true,
+                    "link": "",
+                    "key": "sample9"
+                },
+                {
+                    "activity": "Meditar durante 10 minutos",
+                    "availability": 0.9,
+                    "type": "relaxation",
+                    "participants": 1,
+                    "price": 0,
+                    "accessibility": "Few to no challenges",
+                    "duration": "minutes",
+                    "kidFriendly": true,
+                    "link": "",
+                    "key": "sample5"
+                },
+                {
+                    "activity": "Tomar un baño relajante",
+                    "availability": 0.8,
+                    "type": "relaxation",
+                    "participants": 1,
+                    "price": 0.1,
+                    "accessibility": "Few to no challenges",
+                    "duration": "minutes",
+                    "kidFriendly": true,
+                    "link": "",
+                    "key": "sample10"
+                },
+                {
+                    "activity": "Organizar tu escritorio",
+                    "availability": 0.9,
+                    "type": "busywork",
+                    "participants": 1,
+                    "price": 0,
+                    "accessibility": "Few to no challenges",
+                    "duration": "minutes",
+                    "kidFriendly": true,
+                    "link": "",
+                    "key": "sample11"
+                },
+                {
+                    "activity": "Donar ropa que ya no uses",
+                    "availability": 0.6,
+                    "type": "charity",
+                    "participants": 1,
+                    "price": 0,
+                    "accessibility": "Minor challenges",
+                    "duration": "hours",
+                    "kidFriendly": true,
+                    "link": "",
+                    "key": "sample12"
+                }
+            ];
+
+            return allSampleActivities.filter(activity => {
+                const typeMatch = !type || activity.type === type;
+                const participantsMatch = !participants || activity.participants === parseInt(participants);
+                return typeMatch && participantsMatch;
+            });
         }
     </script>
 </body>
